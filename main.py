@@ -1,6 +1,21 @@
 import tkinter
 from tkinter import ttk
 
+def do_copy():
+    pass
+
+def do_save():
+    pass
+
+def do_clear():
+    pass
+
+def do_add():
+    pass
+
+def do_remove():
+    pass
+
 window = tkinter.Tk()
 window.title('GUI SCAMP')
 
@@ -14,14 +29,14 @@ buttons = tkinter.Frame(window)
 
 file_buttons = tkinter.Frame(buttons)
 
-copy = tkinter.Button(file_buttons,text='复制')
-save = tkinter.Button(file_buttons,text='保存')
-clear = tkinter.Button(file_buttons,text='清空')
+copy = tkinter.Button(file_buttons,text='复制',command=do_copy)
+save = tkinter.Button(file_buttons,text='保存',command=do_save)
+clear = tkinter.Button(file_buttons,text='清空',command=do_clear)
 
 melody_buttons = tkinter.Frame(buttons)
 
-add = tkinter.Button(melody_buttons,text='添加')
-remove = tkinter.Button(melody_buttons,text='删除')
+add = tkinter.Button(melody_buttons,text='添加',command=do_add)
+remove = tkinter.Button(melody_buttons,text='删除',command=do_remove)
 
 copy.pack(side=tkinter.LEFT)
 save.pack(side=tkinter.LEFT)
