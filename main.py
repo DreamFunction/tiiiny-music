@@ -23,7 +23,7 @@ melody = ttk.Treeview(window,columns=('duration'))
 melody.heading('#0',text='音符')
 melody.heading('#1',text='时值')
 
-result = tkinter.Text()
+result = tkinter.Text(state='disabled')
 
 buttons = tkinter.Frame(window)
 
