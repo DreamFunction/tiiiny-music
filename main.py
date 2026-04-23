@@ -21,6 +21,7 @@ clear = tkinter.Button(file_buttons,text='清空')
 melody_buttons = tkinter.Frame(buttons)
 
 add = tkinter.Button(melody_buttons,text='添加')
+remove = tkinter.Button(melody_buttons,text='删除')
 
 copy.pack(side=tkinter.LEFT)
 save.pack(side=tkinter.LEFT)
@@ -29,6 +30,7 @@ clear.pack(side=tkinter.LEFT)
 file_buttons.pack(side=tkinter.LEFT)
 
 add.pack(side=tkinter.LEFT)
+remove.pack(side=tkinter.LEFT)
 
 melody_buttons.pack(side=tkinter.LEFT,padx=10)
 
