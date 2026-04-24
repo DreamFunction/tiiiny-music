@@ -1,3 +1,6 @@
+# Tiiiny Music->main.py
+# Copyright (c) 2026 DreamFunction
+
 import tkinter
 from tkinter import ttk
 
@@ -17,7 +20,7 @@ def do_remove():
     pass
 
 window = tkinter.Tk()
-window.title('GUI SCAMP')
+window.title('Tiiiny Music')
 
 melody = ttk.Treeview(window,columns=('duration'))
 melody.heading('#0',text='音符')
