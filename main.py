@@ -3,57 +3,105 @@
 
 import tkinter
 from tkinter import ttk
+import notemidi
+import scamp
+import time
 
-def do_copy():
+def read_all_rows(tree):
+    """遍历 Treeview 的所有行，返回数据列表"""
+    data = []
+    for item in tree.get_children():  # get_children() 返回所有行ID
+        # 获取音符（第一列，列名为 #0）
+        note = tree.item(item, 'text')
+        # 获取时值（第二列，columns 里的第一列）
+        duration = tree.item(item, 'values')[0]  # values 是元组，索引0是第一个自定义列
+        if note!='休止':
+            data.append((note[0]+note[4], float(duration)))
+        else:
+            data.append(('r',float(duration)))
+    return data
+
+def do_openfile():
     pass
 
 def do_save():
     pass
 
-def do_clear():
-    pass
+def do_play():
+    mlist = notemidi.translate(read_all_rows(melody))
+    for i in range(len(mlist)):
+        piano.play_note(mlist[i][0],mlist[i][2],mlist[i][1],blocking=True)
 
 def do_add():
-    pass
+    if nvar.get()=='休止':
+        ngvar.set('休止')
+        melody.insert('',index=tkinter.END,text='休止',value=dvar.get())
+    elif ngvar.get()=='休止':
+        nvar.set('休止')
+        melody.insert('',index=tkinter.END,text='休止',value=dvar.get())
+    else:
+        melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value=dvar.get())
 
 def do_remove():
-    pass
+    if melody.selection()!=():
+        melody.delete(melody.selection())
+
+session = scamp.Session()
+piano = session.new_part('piano')
 
 window = tkinter.Tk()
 window.title('Tiiiny Music')
 
-notes = []
-
-melody = ttk.Treeview(window,columns=('duration'))
+melody = ttk.Treeview(window,columns=('duration',))
 melody.heading('#0',text='音符')
 melody.heading('#1',text='时值')
+
+choice = tkinter.Frame(window)
+
+nvar = tkinter.StringVar(choice)
+nvar.set('c(1)')
+note = tkinter.OptionMenu(choice,nvar,'c(1)','d(2)','e(3)','f(4)','g(5)','a(6)','b(7)','休止')
+ngvar = tkinter.StringVar(choice)
+ngvar.set('4')
+note_group = tkinter.OptionMenu(choice,ngvar,'1','2','3','4','5','6','7','8')
+dvar = tkinter.StringVar(choice)
+dvar.set('4')
+dur = tkinter.OptionMenu(choice,dvar,'1','2','4','8','16','32')
+
 
 buttons = tkinter.Frame(window)
 
 file_buttons = tkinter.Frame(buttons)
 
-copy = tkinter.Button(file_buttons,text='复制',command=do_copy)
+openfile = tkinter.Button(file_buttons,text='打开',command=do_openfile)
 save = tkinter.Button(file_buttons,text='保存',command=do_save)
-clear = tkinter.Button(file_buttons,text='清空',command=do_clear)
 
 melody_buttons = tkinter.Frame(buttons)
 
 add = tkinter.Button(melody_buttons,text='添加',command=do_add)
 remove = tkinter.Button(melody_buttons,text='删除',command=do_remove)
+play = tkinter.Button(melody_buttons,text='播放',command=do_play)
 
-copy.pack(side=tkinter.LEFT)
+openfile.pack(side=tkinter.LEFT)
 save.pack(side=tkinter.LEFT)
-clear.pack(side=tkinter.LEFT)
 
 file_buttons.pack(side=tkinter.LEFT)
 
 add.pack(side=tkinter.LEFT)
 remove.pack(side=tkinter.LEFT)
+play.pack(side=tkinter.LEFT)
+
 
 melody_buttons.pack(side=tkinter.LEFT,padx=10)
 
-buttons.pack(anchor=tkinter.NW)
+buttons.pack(side=tkinter.TOP)
 
-melody.pack(side=tkinter.LEFT,anchor=tkinter.W,fill=tkinter.Y)
+note.pack(side=tkinter.LEFT)
+note_group.pack(side=tkinter.LEFT)
+dur.pack(side=tkinter.LEFT)
+
+choice.pack()
+
+melody.pack()
 
 window.mainloop()
