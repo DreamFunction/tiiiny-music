@@ -22,11 +22,11 @@ def do_remove():
 window = tkinter.Tk()
 window.title('Tiiiny Music')
 
+notes = []
+
 melody = ttk.Treeview(window,columns=('duration'))
 melody.heading('#0',text='音符')
 melody.heading('#1',text='时值')
-
-result = tkinter.Text(state='disabled')
 
 buttons = tkinter.Frame(window)
 
@@ -55,6 +55,5 @@ melody_buttons.pack(side=tkinter.LEFT,padx=10)
 buttons.pack(anchor=tkinter.NW)
 
 melody.pack(side=tkinter.LEFT,anchor=tkinter.W,fill=tkinter.Y)
-result.pack(side=tkinter.LEFT,anchor=tkinter.E)
 
 window.mainloop()
