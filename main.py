@@ -4,8 +4,58 @@
 import tkinter
 from tkinter import ttk
 import notemidi
-import scamp
 import time
+import mido
+import json
+
+def play_midi_notes(notes_data):
+    """
+    一个简单的MIDI播放器，使用 Mido 强制 ALSA 后端。
+    notes_data: notemidi.translate() 的输出，如 [(60, 0.5, 80), ...]
+    """
+    # 1. 核心：强制使用 ALSA 后端，彻底摆脱 JACK
+    mido.set_backend('mido.backends.rtmidi/LINUX_ALSA')
+    
+    # 2. 获取所有可用的输出端口
+    available_ports = mido.get_output_names()
+    
+    if not available_ports:
+        print("错误：未找到任何 MIDI 输出端口。")
+        return
+
+    # 3. 查找 FluidSynth 端口
+    fluid_port_name = None
+    for port in available_ports:
+        if 'FLUID' in port or 'Synth' in port:
+            fluid_port_name = port
+            break
+    
+    if fluid_port_name is None:
+        print("错误：未找到 FluidSynth 端口，请确保 FluidSynth 正在运行。")
+        print("可用端口：", available_ports)
+        return
+    
+    # 4. 打开找到的 FluidSynth 端口
+    print(f"已连接到 MIDI 设备: {fluid_port_name}")
+    midi_out = mido.open_output(fluid_port_name)
+    
+    # 5. 播放
+    for note, duration, velocity in notes_data:
+        if note is None: # 休止符
+            time.sleep(duration)
+            continue
+       
+        # 使用 Mido 的消息格式
+        note_on = mido.Message('note_on', note=note, velocity=velocity)
+        note_off = mido.Message('note_off', note=note)
+       
+        midi_out.send(note_on)
+        time.sleep(duration)
+        midi_out.send(note_off)
+
+    # 6. 关闭端口
+    midi_out.close()
+    del midi_out
 
 def read_all_rows(tree):
     """遍历 Treeview 的所有行，返回数据列表"""
@@ -22,15 +72,23 @@ def read_all_rows(tree):
     return data
 
 def do_openfile():
-    pass
+    with open('data.json') as f:
+        for i in json.loads(f.read()):
+            if i[0]=='休止':
+                melody.insert('',index=tkinter.END,text='休止',value=i[1])
+            else:
+                map = {'c':1,'d':2,'e':3,'f':4,'g':5,'a':6,'b':7}
+                item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][1]
+                melody.insert('',index=tkinter.END,text=item,value=i[1])
+ 
 
 def do_save():
-    pass
+    with open('data.json','w') as f:
+        f.write(json.dumps(read_all_rows(melody)))
 
 def do_play():
     mlist = notemidi.translate(read_all_rows(melody))
-    for i in range(len(mlist)):
-        piano.play_note(mlist[i][0],mlist[i][2],mlist[i][1],blocking=True)
+    play_midi_notes(mlist)
 
 def do_add():
     if nvar.get()=='休止':
@@ -45,9 +103,6 @@ def do_add():
 def do_remove():
     if melody.selection()!=():
         melody.delete(melody.selection())
-
-session = scamp.Session()
-piano = session.new_part('piano')
 
 window = tkinter.Tk()
 window.title('Tiiiny Music')
