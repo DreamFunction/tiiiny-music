@@ -4,6 +4,8 @@
 
 **语言**：中文（虽然就一种我还是要写，万一以后加英文了呢）
 
+本项目主仓库在 `https://gitee/dream-function/tiiiny-music` ，有条件的朋友可以去那里。
+
 ## 介绍
 
 tiiiny music 是一个极简音乐 DAW，准确说应该叫 tiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...（自己想象有多少个 i）ny music，主打极简、搞笑（但也正经），中文名叫极————————————————————（自己想象有多少个“——”）……简 音乐。
