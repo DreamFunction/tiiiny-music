@@ -78,10 +78,10 @@ def do_openfile():
         do = messagebox.askyesno('打开文件','打开文件将会覆盖您目前编辑的所有内容。确认打开吗？')
         if do==False:
             return
-    for item in melody.get_children():
-        melody.delete(item)
     path = filedialog.askopenfilename()
     if path not in ('',()):
+        for item in melody.get_children():
+        melody.delete(item)
         with open(path) as f:
             for i in json.loads(f.read()):
                 if i[0]=='休止':
@@ -96,7 +96,7 @@ def do_save():
     path = filedialog.asksaveasfilename()
     if path not in ('',()):
         if path[-4:]!='.json':
-            do = messagebox.askyesno('保存文件','本程序需要的扩展名是.json。需要自动加入扩展名吗？')
+            do = messagebox.askyesno('保存文件','本程序需要的扩展名是“.json”。需要自动加入扩展名吗？')
             if do==True:
                 path += '.json'
         with open(path,'w') as f:
