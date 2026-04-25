@@ -3,6 +3,8 @@
 
 import tkinter
 from tkinter import ttk
+from tkinter import filedialog
+from tkinter import messagebox
 import notemidi
 import time
 import mido
@@ -72,19 +74,28 @@ def read_all_rows(tree):
     return data
 
 def do_openfile():
-    with open('data.json') as f:
-        for i in json.loads(f.read()):
-            if i[0]=='休止':
-                melody.insert('',index=tkinter.END,text='休止',value=i[1])
-            else:
-                map = {'c':1,'d':2,'e':3,'f':4,'g':5,'a':6,'b':7}
-                item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][1]
-                melody.insert('',index=tkinter.END,text=item,value=i[1])
+    if read_all_rows(melody)!=[]:
+        do = messagebox.askyesno('打开文件','打开文件将会覆盖您目前编辑的所有内容。确认打开吗？')
+        if do==False:
+            return 
+    path = filedialog.askopenfilename()
+    if path!='':
+        
+        with open(path) as f:
+            for i in json.loads(f.read()):
+                if i[0]=='休止':
+                    melody.insert('',index=tkinter.END,text='休止',value=i[1])
+                else:
+                    map = {'c':1,'d':2,'e':3,'f':4,'g':5,'a':6,'b':7}
+                    item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][1]
+                    melody.insert('',index=tkinter.END,text=item,value=i[1])
  
 
 def do_save():
-    with open('data.json','w') as f:
-        f.write(json.dumps(read_all_rows(melody)))
+    path = filedialog.asksaveasfilename()
+    if path!='':
+        with open(path,'w') as f:
+            f.write(json.dumps(read_all_rows(melody)))
 
 def do_play():
     mlist = notemidi.translate(read_all_rows(melody))
