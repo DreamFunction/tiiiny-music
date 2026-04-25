@@ -81,7 +81,7 @@ def do_openfile():
     path = filedialog.askopenfilename()
     if path not in ('',()):
         for item in melody.get_children():
-        melody.delete(item)
+            melody.delete(item)
         with open(path) as f:
             for i in json.loads(f.read()):
                 if i[0]=='休止':
