@@ -104,12 +104,13 @@ def do_openfile():
 def do_save():
     path = filedialog.asksaveasfilename()
     if path not in ('',()):
-        if path[-4:]!='.json':
+        if path[-5:]!='.json':
             do = messagebox.askyesno('保存文件','本程序需要的扩展名是“.json”。需要自动加入扩展名吗？')
             if do==True:
                 path += '.json'
         with open(path,'w') as f:
             f.write(json.dumps(read_all_rows(melody)))
+        messagebox.showinfo('保存文件','保存成功！')
 
 def do_play():
     mlist = notemidi.translate(read_all_rows(melody))
