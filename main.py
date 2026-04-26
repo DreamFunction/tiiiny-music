@@ -35,6 +35,7 @@ def play_midi_notes(notes_data):
     if fluid_port_name is None:
         print("错误：未找到 FluidSynth 端口，请确保 FluidSynth 正在运行。")
         print("可用端口：", available_ports)
+        messagebox.showerror('音频输出器错误',f'错误：未找到 FluidSynth 端口，请确保 FluidSynth 正在运行。\n可用端口：{available_ports}')
         return
     
     # 4. 打开找到的 FluidSynth 端口
@@ -72,6 +73,14 @@ def read_all_rows(tree):
         else:
             data.append(('r',float(duration)))
     return data
+
+def close():
+    if read_all_rows(melody)!=[]:
+        do = messagebox.askyesno('退出','如果您还没有保存内容，现在退出可能会丢失您目前编辑的所有内容。确认退出吗？')
+        if do==True:
+            window.destroy()
+    else:
+        window.destroy()
 
 def do_openfile():
     if read_all_rows(melody)!=[]:
@@ -122,6 +131,7 @@ def do_remove():
 
 window = tkinter.Tk()
 window.title('Tiiiny Music')
+window.protocol('WM_DELETE_WINDOW',close)
 
 melody = ttk.Treeview(window,columns=('duration',))
 melody.heading('#0',text='音符')
