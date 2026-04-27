@@ -100,17 +100,17 @@ def do_openfile():
         with open(path) as f:
             for i in json.loads(f.read()):
                 if i[0]=='休止':
-                    if i[1][-1]=='.':
-                        melody.insert('',index=tkinter.END,text='休止',value='附点'+i[1])
-                    else:
-                        melody.insert('',index=tkinter.END,text='休止',value=i[1])
+                    if isinstance(i[1],str):
+                        if i[1][-1]=='.':
+                            melody.insert('',index=tkinter.END,text='休止',value='附点'+i[1])
+                    melody.insert('',index=tkinter.END,text='休止',value=i[1])
                 else:
                     map = {'c':1,'d':2,'e':3,'f':4,'g':5,'a':6,'b':7}
                     item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][1]
-                    if i[1][-1]=='.':
-                        melody.insert('',index=tkinter.END,text=item,value='附点'+i[1])
-                    else:
-                        melody.insert('',index=tkinter.END,text=item,value=i[1])
+                    if isinstance(i[1],str):
+                        if i[1][-1]=='.':
+                            melody.insert('',index=tkinter.END,text=item,value='附点'+i[1])
+                    melody.insert('',index=tkinter.END,text=item,value=i[1])
  
 
 def do_save():
