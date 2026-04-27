@@ -74,7 +74,10 @@ def read_all_rows(tree):
             else:
                 data.append((note[0]+note[4],duration[2:]+'.'))
         else:
-            data.append(('r',float(duration)))
+            if duration[:2]!='附点':
+                data.append(('r',float(duration)))
+            else:
+                data.append(('r', duration[2:]+'.'))
     return data
 
 def close():
