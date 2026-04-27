@@ -69,7 +69,10 @@ def read_all_rows(tree):
         # 获取时值（第二列，columns 里的第一列）
         duration = tree.item(item, 'values')[0]  # values 是元组，索引0是第一个自定义列
         if note!='休止':
-            data.append((note[0]+note[4], float(duration)))
+            if duration[:2]!='附点':
+                data.append((note[0]+note[4], float(duration)))
+            else:
+                data.append((note[0]+note[4],duration[2:]+'.'))
         else:
             data.append(('r',float(duration)))
     return data
@@ -94,11 +97,17 @@ def do_openfile():
         with open(path) as f:
             for i in json.loads(f.read()):
                 if i[0]=='休止':
-                    melody.insert('',index=tkinter.END,text='休止',value=i[1])
+                    if i[1][-1]=='.':
+                        melody.insert('',index=tkinter.END,text='休止',value='附点'+i[1])
+                    else:
+                        melody.insert('',index=tkinter.END,text='休止',value=i[1])
                 else:
                     map = {'c':1,'d':2,'e':3,'f':4,'g':5,'a':6,'b':7}
                     item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][1]
-                    melody.insert('',index=tkinter.END,text=item,value=i[1])
+                    if i[1][-1]=='.':
+                        melody.insert('',index=tkinter.END,text=item,value='附点'+i[1])
+                    else:
+                        melody.insert('',index=tkinter.END,text=item,value=i[1])
  
 
 def do_save():
@@ -119,12 +128,21 @@ def do_play():
 def do_add():
     if nvar.get()=='休止':
         ngvar.set('休止')
-        melody.insert('',index=tkinter.END,text='休止',value=dvar.get())
+        if dotvar.get()=='有附点':
+            melody.insert('',index=tkinter.END,text='休止',value='附点'+dvar.get())
+        else:
+            melody.insert('',index=tkinter.END,text='休止',value=dvar.get())
     elif ngvar.get()=='休止':
         nvar.set('休止')
-        melody.insert('',index=tkinter.END,text='休止',value=dvar.get())
+        if dotvar.get()=='有附点':
+            melody.insert('',index=tkinter.END,text='休止',value='附点'+dvar.get())
+        else:
+            melody.insert('',index=tkinter.END,text='休止',value=dvar.get())
     else:
-        melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value=dvar.get())
+        if dotvar.get()=='有附点':
+            melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value='附点'+dvar.get())
+        else:
+            melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value=dvar.get())
 
 def do_remove():
     if melody.selection()!=():
@@ -149,6 +167,9 @@ note_group = tkinter.OptionMenu(choice,ngvar,'1','2','3','4','5','6','7','8')
 dvar = tkinter.StringVar(choice)
 dvar.set('4')
 dur = tkinter.OptionMenu(choice,dvar,'1','2','4','8','16','32')
+dotvar = tkinter.StringVar(choice)
+dotvar.set('无附点')
+dot = tkinter.OptionMenu(choice,dotvar,'有附点','无附点')
 
 
 buttons = tkinter.Frame(window)
@@ -181,6 +202,7 @@ buttons.pack(side=tkinter.TOP)
 note.pack(side=tkinter.LEFT)
 note_group.pack(side=tkinter.LEFT)
 dur.pack(side=tkinter.LEFT)
+dot.pack(side=tkinter.LEFT)
 
 choice.pack()
 
