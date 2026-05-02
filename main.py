@@ -74,17 +74,17 @@ def read_all_rows(tree):
                     if '#' not in note:
                         data.append((note[0]+note[-1], int(duration)))
                     else:
-                         data.append((note[0:1]+note[-1], int(duration)))
+                         data.append((note[0]+note[4]+note[-1], int(duration)))
                 else:
                     if '#' not in note:
                         data.append((note[0]+note[-1], duration))
                     else:
-                        data.append((note[0:1]+note[-1], duration))
+                        data.append((note[0]+note[4]+note[-1], duration))
             else:
                 if '#' not in note:
                     data.append((note[0]+note[-1],duration[2:]+'.'))
                 else:
-                    data.append((note[0:1]+note[-1],duration[2:]+'.'))
+                    data.append((note[0]+note[4]+note[-1],duration[2:]+'.'))
         else:
             if duration[:2]!='附点':
                 if '+' not in duration:
@@ -117,18 +117,21 @@ def do_openfile():
                 if i[0]=='R' or i[0]=='r':
                     if isinstance(i[1],str):
                         if i[1][-1]=='.':
-                            melody.insert('',index=tkinter.END,text='休止',value='附点'+i[1])
-                    melody.insert('',index=tkinter.END,text='休止',value=i[1])
+                            melody.insert('',index=tkinter.END,text='休止',value='附点'+i[:-1])
+                    else:
+                        melody.insert('',index=tkinter.END,text='休止',value=i[1])
                 else:
                     map = {'c':'1','d':'2','e':'3','f':'4','g':'5','a':'6','b':'7',
                            'C':'1','D':'2','E':'3','F':'4','G':'5','A':'6','B':'7'}
-                    if '#' not in i:
+                    if '#' not in i[0]:
                         item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][-1]
                     else:
-                        item = i[0][0:1]+'('+str(map[i[0][0:1]])+')'+i[0][-1]
+                        item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][1]+i[0][-1]
                     if isinstance(i[1],str):
                         if i[1][-1]=='.':
                             melody.insert('',index=tkinter.END,text=item,value='附点'+i[1][:-1])
+                        else:
+                            melody.insert('',index=tkinter.END,text=item,value=i[1])
                     else:
                         melody.insert('',index=tkinter.END,text=item,value=i[1])
  
@@ -206,7 +209,7 @@ choice = tkinter.Frame(window)
 
 nvar = tkinter.StringVar(choice)
 nvar.set('C(1)')
-note = tkinter.OptionMenu(choice,nvar,'C(1)','C(1)#','D(2)','D(2)#','E(3)','F(4)','F(4)#','G(5)''G(5)#','A(6)','A(6)#','B(7)','休止')
+note = tkinter.OptionMenu(choice,nvar,'C(1)','C(1)#','D(2)','D(2)#','E(3)','F(4)','F(4)#','G(5)','G(5)#','A(6)','A(6)#','B(7)','休止')
 ngvar = tkinter.StringVar(choice)
 ngvar.set('4')
 note_group = tkinter.OptionMenu(choice,ngvar,'1','2','3','4','5','6','7','8')
