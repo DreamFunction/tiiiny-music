@@ -191,7 +191,6 @@ def do_adddur():
     if melody.selection()!=():
         if adddurvar.get()!='不加时值':
             item = melody.selection()[0]
-            print(melody.item(item,'values'))
             if melody.item(item,'values')[0][0:2]!='附点':
                 melody.item(item,values=(melody.item(item,'values')[0]+'+'+adddurvar.get(),))
             else:
