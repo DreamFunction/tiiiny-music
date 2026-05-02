@@ -150,10 +150,9 @@ def do_play():
             mlist = notemidi.translate(read_all_rows(melody),bpm=float(bpm.get()))
             play_midi_notes(mlist)
         else:
-            message.showerror('播放错误','每分节拍数(bpm)必须是数字！')
+            message.showerror('播放错误','每分节拍数(BPM)必须是数字！')
     else:
-        mlist = notemidi.translate(read_all_rows(melody))
-        play_midi_notes(mlist)
+        message.showerror('播放错误','每分节拍数(BPM)不能为空！')
 
 def do_add():
     if nvar.get()=='休止':
@@ -238,6 +237,7 @@ remove = tkinter.Button(melody_buttons,text='删除',command=do_remove)
 play = tkinter.Button(melody_buttons,text='播放',command=do_play)
 bpmmsg = tkinter.Label(melody_buttons,text='BPM')
 bpm = tkinter.Entry(melody_buttons)
+bpm.insert(0,'120')
 
 openfile.pack(side=tkinter.LEFT)
 save.pack(side=tkinter.LEFT)
