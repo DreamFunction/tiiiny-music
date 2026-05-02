@@ -147,7 +147,19 @@ def do_add():
             melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value=dvar.get())
 
 def do_insert():
-    pass
+    pos = melody.index(melody.selection()[0])+1
+    
+    if nvar.get()=='休止':
+        if dotvar.get()=='有附点':
+            melody.insert('',index=pos,text='休止',value='附点'+dvar.get())
+        else:
+            melody.insert('',index=pos,text='休止',value=dvar.get())
+    else:
+        if dotvar.get()=='有附点':
+            melody.insert('',index=pos,text=nvar.get()+ngvar.get(),value='附点'+dvar.get())
+        else:
+            melody.insert('',index=pos,text=nvar.get()+ngvar.get(),value=dvar.get())
+
 
 def do_adddur():
     if melody.selection()!=():
