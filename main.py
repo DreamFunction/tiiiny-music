@@ -70,12 +70,18 @@ def read_all_rows(tree):
         duration = tree.item(item, 'values')[0]  # values 是元组，索引0是第一个自定义列
         if note!='休止':
             if duration[:2]!='附点':
-                data.append((note[0]+note[4], float(duration)))
+                if '+' not in duration:
+                    data.append((note[0]+note[4], float(duration)))
+                else:
+                    data.append((note[0]+note[4], duration))
             else:
                 data.append((note[0]+note[4],duration[2:]+'.'))
         else:
             if duration[:2]!='附点':
-                data.append(('r',float(duration)))
+                if '+' not in duration:
+                    data.append(('r', float(duration)))
+                else:
+                    data.append(('r', duration))
             else:
                 data.append(('r', duration[2:]+'.'))
     return data
@@ -105,7 +111,7 @@ def do_openfile():
                             melody.insert('',index=tkinter.END,text='休止',value='附点'+i[1])
                     melody.insert('',index=tkinter.END,text='休止',value=i[1])
                 else:
-                    map = {'c':1,'d':2,'e':3,'f':4,'g':5,'a':6,'b':7}
+                    map = {'c':'1','d':'2','e':'3','f':'4','g':'5','a':'6','b':'7'}
                     item = i[0][0]+'('+str(map[i[0][0]])+')'+i[0][1]
                     if isinstance(i[1],str):
                         if i[1][-1]=='.':
@@ -130,13 +136,6 @@ def do_play():
 
 def do_add():
     if nvar.get()=='休止':
-        ngvar.set('休止')
-        if dotvar.get()=='有附点':
-            melody.insert('',index=tkinter.END,text='休止',value='附点'+dvar.get())
-        else:
-            melody.insert('',index=tkinter.END,text='休止',value=dvar.get())
-    elif ngvar.get()=='休止':
-        nvar.set('休止')
         if dotvar.get()=='有附点':
             melody.insert('',index=tkinter.END,text='休止',value='附点'+dvar.get())
         else:
@@ -146,6 +145,18 @@ def do_add():
             melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value='附点'+dvar.get())
         else:
             melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value=dvar.get())
+
+def do_insert():
+    pass
+
+def do_adddur():
+    if melody.selection()!=():
+        if adddurvar.get()!='不加时值':
+            item = melody.selection()[0]
+            if melody.item(item,'value')[0:1]!='附点':
+                melody.item(item,values=(melody.item(item,'value')[0]+'+'+adddurvar.get(),))
+            else:
+                messagebox.showerror('时值错误','附点和加时值不能放在一起！')
 
 def do_remove():
     if melody.selection()!=():
@@ -173,6 +184,9 @@ dur = tkinter.OptionMenu(choice,dvar,'1','2','4','8','16','32')
 dotvar = tkinter.StringVar(choice)
 dotvar.set('无附点')
 dot = tkinter.OptionMenu(choice,dotvar,'有附点','无附点')
+adddurvar = tkinter.StringVar(choice)
+adddurvar.set('不加时值')
+adddurmenu = tkinter.OptionMenu(choice,adddurvar,'不加时值','1','2','4','8','16','32')
 
 
 buttons = tkinter.Frame(window)
@@ -185,8 +199,10 @@ save = tkinter.Button(file_buttons,text='保存',command=do_save)
 melody_buttons = tkinter.Frame(buttons)
 
 add = tkinter.Button(melody_buttons,text='添加',command=do_add)
+insert = tkinter.Button(melody_buttons,text='插入',command=do_insert)
 remove = tkinter.Button(melody_buttons,text='删除',command=do_remove)
 play = tkinter.Button(melody_buttons,text='播放',command=do_play)
+adddur = tkinter.Button(melody_buttons,text='加时值',command=do_adddur)
 
 openfile.pack(side=tkinter.LEFT)
 save.pack(side=tkinter.LEFT)
@@ -194,6 +210,8 @@ save.pack(side=tkinter.LEFT)
 file_buttons.pack(side=tkinter.LEFT)
 
 add.pack(side=tkinter.LEFT)
+insert.pack(side=tkinter.LEFT)
+adddur.pack(side=tkinter.LEFT)
 remove.pack(side=tkinter.LEFT)
 play.pack(side=tkinter.LEFT)
 
@@ -206,6 +224,7 @@ note.pack(side=tkinter.LEFT)
 note_group.pack(side=tkinter.LEFT)
 dur.pack(side=tkinter.LEFT)
 dot.pack(side=tkinter.LEFT)
+adddurmenu.pack(side=tkinter.LEFT)
 
 choice.pack()
 
