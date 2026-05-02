@@ -88,11 +88,11 @@ def read_all_rows(tree):
         else:
             if duration[:2]!='附点':
                 if '+' not in duration:
-                    data.append(('r', int(duration)))
+                    data.append(('R', int(duration)))
                 else:
-                    data.append(('r', duration))
+                    data.append(('R', duration))
             else:
-                data.append(('r', duration[2:]+'.'))
+                data.append(('R', duration[2:]+'.'))
     return data
 
 def close():
@@ -114,7 +114,7 @@ def do_openfile():
             melody.delete(item)
         with open(path) as f:
             for i in json.loads(f.read()):
-                if i[0]=='休止':
+                if i[0]=='R' or i[0]=='r':
                     if isinstance(i[1],str):
                         if i[1][-1]=='.':
                             melody.insert('',index=tkinter.END,text='休止',value='附点'+i[1])
@@ -128,8 +128,9 @@ def do_openfile():
                         item = i[0][0:1]+'('+str(map[i[0][0:1]])+')'+i[0][-1]
                     if isinstance(i[1],str):
                         if i[1][-1]=='.':
-                            melody.insert('',index=tkinter.END,text=item,value='附点'+i[1])
-                    melody.insert('',index=tkinter.END,text=item,value=i[1])
+                            melody.insert('',index=tkinter.END,text=item,value='附点'+i[1][:-1])
+                    else:
+                        melody.insert('',index=tkinter.END,text=item,value=i[1])
  
 
 def do_save():
@@ -144,8 +145,15 @@ def do_save():
         messagebox.showinfo('保存文件','保存成功！')
 
 def do_play():
-    mlist = notemidi.translate(read_all_rows(melody))
-    play_midi_notes(mlist)
+    if bpm.get()!='':
+        if bpm.get().isdigit():
+            mlist = notemidi.translate(read_all_rows(melody),bpm=float(bpm.get()))
+            play_midi_notes(mlist)
+        else:
+            message.showerror('播放错误','每分节拍数(bpm)必须是数字！')
+    else:
+        mlist = notemidi.translate(read_all_rows(melody))
+        play_midi_notes(mlist)
 
 def do_add():
     if nvar.get()=='休止':
@@ -225,9 +233,11 @@ melody_buttons = tkinter.Frame(buttons)
 
 add = tkinter.Button(melody_buttons,text='添加',command=do_add)
 insert = tkinter.Button(melody_buttons,text='插入',command=do_insert)
+adddur = tkinter.Button(melody_buttons,text='加时值',command=do_adddur)
 remove = tkinter.Button(melody_buttons,text='删除',command=do_remove)
 play = tkinter.Button(melody_buttons,text='播放',command=do_play)
-adddur = tkinter.Button(melody_buttons,text='加时值',command=do_adddur)
+bpmmsg = tkinter.Label(melody_buttons,text='BPM')
+bpm = tkinter.Entry(melody_buttons)
 
 openfile.pack(side=tkinter.LEFT)
 save.pack(side=tkinter.LEFT)
@@ -239,6 +249,8 @@ insert.pack(side=tkinter.LEFT)
 adddur.pack(side=tkinter.LEFT)
 remove.pack(side=tkinter.LEFT)
 play.pack(side=tkinter.LEFT)
+bpmmsg.pack(side=tkinter.LEFT)
+bpm.pack(side=tkinter.LEFT)
 
 
 melody_buttons.pack(side=tkinter.LEFT,padx=10)
