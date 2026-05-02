@@ -117,7 +117,7 @@ def do_openfile():
                 if i[0]=='R' or i[0]=='r':
                     if isinstance(i[1],str):
                         if i[1][-1]=='.':
-                            melody.insert('',index=tkinter.END,text='休止',value='附点'+i[:-1])
+                            melody.insert('',index=tkinter.END,text='休止',value='附点'+i[1][:-1])
                     else:
                         melody.insert('',index=tkinter.END,text='休止',value=i[1])
                 else:
@@ -139,7 +139,7 @@ def do_openfile():
 def do_save():
     path = filedialog.asksaveasfilename()
     if path not in ('',()):
-        if path[-5:]!='.json':
+        if not path.endswith('.json'):
             do = messagebox.askyesno('保存文件','本程序需要的扩展名是“.json”。需要自动加入扩展名吗？')
             if do==True:
                 path += '.json'
@@ -153,9 +153,9 @@ def do_play():
             mlist = notemidi.translate(read_all_rows(melody),bpm=float(bpm.get()))
             play_midi_notes(mlist)
         else:
-            message.showerror('播放错误','每分节拍数(BPM)必须是数字！')
+            messagebox.showerror('播放错误','每分节拍数(BPM)必须是数字！')
     else:
-        message.showerror('播放错误','每分节拍数(BPM)不能为空！')
+        messagebox.showerror('播放错误','每分节拍数(BPM)不能为空！')
 
 def do_add():
     if nvar.get()=='休止':
@@ -170,6 +170,9 @@ def do_add():
             melody.insert('',index=tkinter.END,text=nvar.get()+ngvar.get(),value=dvar.get())
 
 def do_insert():
+    if not melody.selection():
+        return
+    
     pos = melody.index(melody.selection()[0])+1
     
     if nvar.get()=='休止':
@@ -188,8 +191,9 @@ def do_adddur():
     if melody.selection()!=():
         if adddurvar.get()!='不加时值':
             item = melody.selection()[0]
-            if melody.item(item,'value')[0:1]!='附点':
-                melody.item(item,values=(melody.item(item,'value')[0]+'+'+adddurvar.get(),))
+            print(melody.item(item,'values'))
+            if melody.item(item,'values')[0][0:2]!='附点':
+                melody.item(item,values=(melody.item(item,'values')[0]+'+'+adddurvar.get(),))
             else:
                 messagebox.showerror('时值错误','附点和加时值不能放在一起！')
 
